@@ -13,14 +13,15 @@ const getAllPrices = async (req, res = response) => {
   axios.get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start='+initialDate.toLocaleDateString('sv')+'&end='+currrentDate.toLocaleDateString('sv'))
   .then(responseAxios => {
    Promise.all(
-      responseAxios.data.map(async (dataBitcoin) => {
-        
+      responseAxios.data.map(async (dataBitcoin, index) => {
+          console.log(index)
         pricesBitcoin.push({
           timestamp:dataBitcoin[0] , 
-          price_low: dataBitcoin[1] , 
-          price_high: dataBitcoin[2],
-           price_open: dataBitcoin[3],
-           price_close:  dataBitcoin[4]
+          priceLow: dataBitcoin[1] , 
+          priceHigh: dataBitcoin[2],
+          priceOpen: dataBitcoin[3],
+          priceClose:  dataBitcoin[4],
+          difference: responseAxios.data[index][4]-responseAxios.data[(index+1)==responseAxios.data.length?responseAxios.data.length-1:index+1][4]
            
         })
       })
@@ -36,7 +37,7 @@ const getAllPrices = async (req, res = response) => {
 
   const getSellByPrice = async (req= request, res = response) => {
     const { date } = req.params;
-
+    console.log(date)
     axios.get('https://api.coinbase.com/v2/prices/BTC-USD/sell/'+date)
     .then(responseAxios => {
       return res.json({

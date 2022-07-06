@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 
 class Server {
@@ -16,11 +17,18 @@ class Server {
     };
 
 
+ 
+    this.middlewares();
     //Rutas de mi aplicación
     this.routes();
   }
 
-
+  middlewares() {
+    //CORS
+    this.app.use(cors());
+    //Directorio público
+    this.app.use(express.static('public'));
+  }
 
   routes() {
     this.app.use(this.paths.bitcoin, require('../routes/bitcoin'));
