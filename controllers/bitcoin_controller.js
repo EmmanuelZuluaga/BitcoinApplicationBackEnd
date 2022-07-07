@@ -10,7 +10,7 @@ const getAllPrices = async (req, res = response) => {
   initialDate.setDate(initialDate.getDate()-14);
   
   let pricesBitcoin=[];
-  axios.get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start='+initialDate.toLocaleDateString('sv')+'&end='+currrentDate.toLocaleDateString('sv'))
+  await axios.get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start='+initialDate.toLocaleDateString('sv')+'&end='+currrentDate.toLocaleDateString('sv'))
   .then(responseAxios => {
    Promise.all(
       responseAxios.data.map(async (dataBitcoin, index) => {
@@ -28,12 +28,14 @@ const getAllPrices = async (req, res = response) => {
         })
       })
     );
-    return res.json({
-      data: pricesBitcoin,
-    });
+   
   })
   .catch(error => {
     console.log('A problem has occurred with the connection...');
+  });
+
+  return res.json({
+    data: pricesBitcoin,
   });
   };
 
