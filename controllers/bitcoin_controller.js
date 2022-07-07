@@ -33,7 +33,7 @@ const getAllPrices = async (req, res = response) => {
     });
   })
   .catch(error => {
-    console.log(error.response.status);
+    console.log('error');
   });
   };
 
@@ -46,9 +46,11 @@ const getAllPrices = async (req, res = response) => {
     .then(responseAxios => {
 
         data= responseAxios.data[0]
+
+        
       })
     .catch(error => {
-      console.log(error.response.status);
+      console.log('error');
     });
   
     const config = {
@@ -63,7 +65,7 @@ const getAllPrices = async (req, res = response) => {
      
     })
     .catch(error => {
-      console.log(error.response.status);
+      console.log('error');
     });
 
     await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=EUR&from=USD&amount="+data[4]+"&date="+date, config)
@@ -73,7 +75,8 @@ const getAllPrices = async (req, res = response) => {
      
     })
     .catch(error => {
-      console.log(error.response.status);
+      console.log('error');
+  
     });
 
     
@@ -83,7 +86,7 @@ const getAllPrices = async (req, res = response) => {
         closePriceEUR: closePriceEUR,
         closePriceUSD: data[4],
         date: date
-      },
+      }, success: true
     });
 
 
