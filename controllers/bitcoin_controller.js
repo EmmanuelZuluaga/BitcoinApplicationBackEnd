@@ -33,7 +33,7 @@ const getAllPrices = async (req, res = response) => {
     });
   })
   .catch(error => {
-    console.log('error');
+    console.log('A problem has occurred with the connection...');
   });
   };
 
@@ -50,12 +50,12 @@ const getAllPrices = async (req, res = response) => {
         
       })
     .catch(error => {
-      console.log('error');
+      console.log('A problem has occurred with the connection...');
     });
   
     const config = {
       headers:{
-        apikey: "B8qTo8pue9QdenWamnPnAmfhDVf4LQ8X"
+        apikey: "kC0nCevDmi5eHLLmGzjglj7hU2x48ypk"
       }
     };
     await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=COP&from=USD&amount="+data[4]+"&date="+date, config)
@@ -65,7 +65,7 @@ const getAllPrices = async (req, res = response) => {
      
     })
     .catch(error => {
-      console.log('error');
+      console.log('A problem has occurred with the connection...');
     });
 
     await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=EUR&from=USD&amount="+data[4]+"&date="+date, config)
@@ -75,7 +75,8 @@ const getAllPrices = async (req, res = response) => {
      
     })
     .catch(error => {
-      console.log('error');
+      
+      console.log('A problem has occurred with the connection...');
   
     });
 
