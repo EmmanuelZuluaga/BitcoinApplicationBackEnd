@@ -42,6 +42,7 @@ const getAllPrices = async (req, res = response) => {
     let data=[];
     let closePriceCOP;
     let closePriceEUR;
+    let closePriceUSD;
     await axios.get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start='+date+'&end='+date)
     .then(responseAxios => {
 
@@ -53,46 +54,24 @@ const getAllPrices = async (req, res = response) => {
       console.log('A problem has occurred with the connection...');
     });
   
-    const config = {
-      headers:{
-        apikey: "kC0nCevDmi5eHLLmGzjglj7hU2x48ypk"
-      }
-    };
-    await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=COP&from=USD&amount="+data[4]+"&date="+date, config)
+   await  axios.get('https://api.coinbase.com/v2/exchange-rates?currency=USD')
     .then(responseAxios => {
-
-      closePriceCOP=responseAxios.data.result;
-     
-    })
-    .catch(error => {
-      console.log('A problem has occurred with the connection...');
-    });
-
-    await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=EUR&from=USD&amount="+data[4]+"&date="+date, config)
-    .then(responseAxios => {
-
-      closePriceEUR=responseAxios.data.result;
-     
-    })
-    .catch(error => {
-      
-      console.log('A problem has occurred with the connection...');
+      closePriceUSD=responseAxios.data.data.rates.USD;
+      closePriceCOP=responseAxios.data.data.rates.COP;
+      closePriceEUR=responseAxios.data.data.rates.EUR;
   
+    })
+    .catch(error => {
+      console.log('A problem has occurred with the connection...');
     });
-
-    
     return res.json({
       data: {
-        closePriceCOP: closePriceCOP,
-        closePriceEUR: closePriceEUR,
-        closePriceUSD: data[4],
-        date: date
-      }, success: true
+        date:date,
+        closePriceUSD: data[4]*closePriceUSD,
+        closePriceCOP: data[4]*closePriceCOP,
+        closePriceEUR: data[4]*closePriceEUR
+      },
     });
-
-
-
-
     };
 
   
