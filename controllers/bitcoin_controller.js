@@ -14,15 +14,17 @@ const getAllPrices = async (req, res = response) => {
   .then(responseAxios => {
    Promise.all(
       responseAxios.data.map(async (dataBitcoin, index) => {
-          console.log(index)
+        let difference=responseAxios.data[index][4]-responseAxios.data[(index+1)==responseAxios.data.length?responseAxios.data.length-1:index+1][4];
+        let date=  new Date();
+        date.setDate(currrentDate.getDate()-index);
         pricesBitcoin.push({
           timestamp:dataBitcoin[0] , 
           priceLow: dataBitcoin[1] , 
           priceHigh: dataBitcoin[2],
           priceOpen: dataBitcoin[3],
           priceClose:  dataBitcoin[4],
-          difference: responseAxios.data[index][4]-responseAxios.data[(index+1)==responseAxios.data.length?responseAxios.data.length-1:index+1][4]
-           
+          difference:difference,
+          date: date.toLocaleDateString('sv')
         })
       })
     );
@@ -31,22 +33,62 @@ const getAllPrices = async (req, res = response) => {
     });
   })
   .catch(error => {
-    console.log(error);
+    console.log(error.response.status);
   });
   };
 
   const getSellByPrice = async (req= request, res = response) => {
     const { date } = req.params;
-    console.log(date)
-    axios.get('https://api.coinbase.com/v2/prices/BTC-USD/sell/'+date)
+    let data=[];
+    let closePriceCOP;
+    let closePriceEUR;
+    await axios.get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start='+date+'&end='+date)
     .then(responseAxios => {
-      return res.json({
-        data: responseAxios.data.data,
-      });
+
+        data= responseAxios.data[0]
+      })
+    .catch(error => {
+      console.log(error.response.status);
+    });
+  
+    const config = {
+      headers:{
+        apikey: "B8qTo8pue9QdenWamnPnAmfhDVf4LQ8X"
+      }
+    };
+    await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=COP&from=USD&amount="+data[4]+"&date="+date, config)
+    .then(responseAxios => {
+
+      closePriceCOP=responseAxios.data.result;
+     
     })
     .catch(error => {
       console.log(error.response.status);
     });
+
+    await  axios.get("https://api.apilayer.com/exchangerates_data/convert?to=EUR&from=USD&amount="+data[4]+"&date="+date, config)
+    .then(responseAxios => {
+
+      closePriceEUR=responseAxios.data.result;
+     
+    })
+    .catch(error => {
+      console.log(error.response.status);
+    });
+
+    
+    return res.json({
+      data: {
+        closePriceCOP: closePriceCOP,
+        closePriceEUR: closePriceEUR,
+        closePriceUSD: data[4],
+        date: date
+      },
+    });
+
+
+
+
     };
 
   
